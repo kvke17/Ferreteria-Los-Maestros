@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Producto - Serrucho</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="encabezado">
+        <h1>Ferreteria Los Maestros</h1>
+        <p><b>Detalle del producto</b></p>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="productos.html">Productos</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Registro</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="seccion">
+            <h2>Serrucho Carpintero 20"</h2>
+            <p><a href="productos.html">Volver al catálogo</a></p>
+            <br>
+            <article>
+                <img src="IMG/sierra.jpg" width="200" height="240" alt="Serrucho Carpintero">
+                <h3>Descripción detallada</h3>
+                <p>Serrucho de costilla para carpintería con hoja de acero al carbono de 20 pulgadas. Cortes precisos y rápidos en distintos tipos de madera.</p>
+                <p><b>Información adicional:</b> Mango ergonómico de madera tratada.</p>
+                
+                <p><b>Precio Unitario:</b> $<span id="precio_unitario">8500</span></p>
+                
+                <label>Cantidad: </label>
+                <input type="number" id="cantidad" value="1" min="1" max="20" style="width: 50px;">
+                
+                <p><b>Total a pagar:</b> $<span id="precio_total">8500</span></p>
+                
+                <button type="button" id="btn_comprar">Calcular y Comprar</button>
+                
+                <p id="mensaje_compra" style="margin-top: 10px; font-weight: bold;"></p>
+            </article>
+        </section>
+    </main>
+    <script src="serrucho.js"></script>
+</body>
+</html>

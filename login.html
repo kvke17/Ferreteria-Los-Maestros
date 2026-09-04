@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Ferreteria</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="encabezado">
+        <h1>Ferreteria Los Maestros</h1>
+        <p><b>Portal de Acceso</b></p>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="productos.html">Productos</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Registro</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <form id="login">
+            <fieldset>
+                <h1>INICIO DE SESIÓN</h1>
+                
+                <label>Email: </label>
+                <input type="email" placeholder="ejemplo@duocuc.cl" required id="email">
+                
+                <label>Contraseña: </label>
+                <input type="password" placeholder="Ingrese su contraseña" required id="contrasenia">
+                
+                <button type="submit">Iniciar Sesión</button>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <p><a href="register.html" style="color: var(--azul-medio); text-decoration: none;">¿No tienes cuenta? Regístrate aquí</a></p>
+                    <p style="margin-top: 10px;"><a href="index.html" style="color: #666; text-decoration: none; font-size: 0.9em;">Volver a la página principal</a></p>
+                </div>
+            </fieldset>
+        </form>
+    </main>
+    <footer style="background-color: var(--azul-oscuro); color: white; text-align: center; padding: 20px; margin-top: 40px;">
+        <p>&copy; 2026 Ferretería. Todos los derechos reservados.</p>
+    </footer>
+    <script src="validaciones.js"></script>
+</body>
+</html>
