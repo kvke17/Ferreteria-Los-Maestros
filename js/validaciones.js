@@ -18,20 +18,18 @@ if (formulario) {
             return;
         }
 
-        // Validar contraseÃ±a
+        // Validar contraseña
         if (!/^[a-zA-Z0-9]+$/.test(contrasenia.value)) {
-            alert("La contraseÃ±a solo debe tener nÃºmeros y letras");
+            alert("La contraseña solo debe tener números y letras");
             contrasenia.focus();
             return;
         }
 
-        alert("Inicio de sesiÃ³n exitoso");
+        alert("Inicio de sesión exitoso");
 
     });
 
 }
-
-
 
 if (registro) {
 
@@ -46,8 +44,7 @@ if (registro) {
         event.preventDefault();
 
         // Validar nombre
-        if (!/^[a-zA-ZÃ¡Ã©Ã­Ã³ÃºÃÃ‰ÃÃ“ÃšÃ±Ã‘\s]+$/.test(nombre.value)) {
-
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre.value)) {
             alert("El nombre debe contener solo letras");
             nombre.focus();
             return;
@@ -65,21 +62,18 @@ if (registro) {
             alert("El correo debe ser Gmail, Outlook o Duoc UC");
             email.focus();
             return;
-
         }
 
-        // Validar contraseÃ±a
+        // Validar contraseña
         if (!/^[a-zA-Z0-9]+$/.test(contrasenia.value)) {
-            alert("La contraseÃ±a solo debe tener nÃºmeros y letras");
+            alert("La contraseña solo debe tener números y letras");
             contrasenia.focus();
             return;
-
         }
 
-
-        // Validar telÃ©fono
+        // Validar teléfono
         if (!/^\+56[0-9]{9}$/.test(telefono.value)) {
-            alert("El telÃ©fono debe comenzar con +56 y contener 9 nÃºmeros despuÃ©s");
+            alert("El teléfono debe comenzar con +56 y contener 9 números después");
             telefono.focus();
             return;
         }
@@ -97,14 +91,14 @@ if (registro) {
         let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
         let mes = hoy.getMonth() - fechaNacimiento.getMonth();
 
-        // Comprobar si todavÃ­a no ha cumplido aÃ±os
+        // Comprobar si todavía no ha cumplido años
         if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
             edad--;
         }
 
         // Validar edad
         if (edad < 18) {
-            alert("Debes ser mayor de 18 aÃ±os");
+            alert("Debes ser mayor de 18 años");
             fenac.focus();
             return;
         }
