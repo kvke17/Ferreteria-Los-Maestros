@@ -1,0 +1,534 @@
+@import './variables.css';
+
+/* =========================================
+   Reset y Tipografía
+   ========================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--gris-fondo);
+  color: var(--texto-oscuro);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* =========================================
+   HUD Superior (Header Fijo y Moderno)
+   ========================================= */
+#encabezado {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-medio) 100%);
+  color: #ffffff;
+  padding: 12px 24px;
+  box-shadow: var(--sombra-hud);
+  transition: all 0.3s ease;
+}
+
+.hud-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.hud-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 8px;
+}
+
+.brand-wrapper {
+  text-align: left;
+  text-decoration: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-wrapper:hover {
+  color: #ffffff;
+}
+
+.brand-logo-small {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand-wrapper h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.brand-wrapper p {
+  color: #a3c2e0;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Navegación del HUD */
+nav.hud-nav {
+  width: 100%;
+  margin-top: 6px;
+}
+
+nav.hud-nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+nav.hud-nav ul li a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  transition: all 0.25s ease;
+  background-color: rgba(255, 255, 255, 0.08);
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+nav.hud-nav ul li a:hover,
+nav.hud-nav ul li a.active {
+  background-color: var(--naranja-rojo);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255, 71, 26, 0.4);
+}
+
+/* Botón Hamburguesa Móvil */
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+/* =========================================
+   Estructura Principal y Secciones
+   ========================================= */
+main.main-content {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 30px auto;
+  padding: 0 20px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.seccion, article.card-articulo {
+  background-color: var(--blanco);
+  padding: 28px;
+  border-radius: 12px;
+  box-shadow: var(--sombra-card);
+  margin-bottom: 25px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.3s ease;
+  border: 1px solid var(--borde-suave);
+}
+
+.seccion:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-hover);
+}
+
+.seccion h2 {
+  color: var(--azul-oscuro);
+  font-size: 1.8rem;
+  margin-bottom: 18px;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.seccion h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 60px;
+  height: 4px;
+  background-color: var(--naranja-rojo);
+  border-radius: 2px;
+}
+
+[data-theme="dark"] .seccion h2,
+body.dark-mode .seccion h2 {
+  color: #60a5fa;
+}
+
+/* =========================================
+   Botones Personalizados (Atoms)
+   ========================================= */
+.btn-ferreteria-primary {
+  background: linear-gradient(135deg, var(--naranja-rojo) 0%, var(--naranja-hover) 100%);
+  color: #ffffff !important;
+  border: none;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 71, 26, 0.3);
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-ferreteria-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 71, 26, 0.45);
+  background: linear-gradient(135deg, var(--naranja-hover) 0%, #b82e00 100%);
+}
+
+.btn-ferreteria-primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn-ferreteria-secondary {
+  background-color: var(--azul-medio);
+  color: #ffffff !important;
+  border: none;
+  padding: 9px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-ferreteria-secondary:hover:not(:disabled) {
+  background-color: var(--azul-oscuro);
+  transform: translateY(-2px);
+}
+
+.btn-ferreteria-outline {
+  background: transparent;
+  color: var(--azul-medio);
+  border: 2px solid var(--azul-medio);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-ferreteria-outline:hover {
+  background-color: var(--azul-medio);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-ferreteria-outline {
+  color: #93c5fd;
+  border-color: #3b82f6;
+}
+
+[data-theme="dark"] .btn-ferreteria-outline:hover {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* =========================================
+   Badges y Etiquetas
+   ========================================= */
+.badge-ferreteria {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+}
+
+.badge-ferreteria-category {
+  background-color: var(--azul-claro);
+  color: var(--azul-medio);
+}
+
+[data-theme="dark"] .badge-ferreteria-category {
+  background-color: #1e3a8a;
+  color: #93c5fd;
+}
+
+.badge-ferreteria-stock {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.badge-ferreteria-lowstock {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+/* =========================================
+   Price Tag
+   ========================================= */
+.price-tag {
+  color: var(--naranja-rojo);
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: -0.5px;
+}
+
+/* =========================================
+   Grilla y Tarjetas de Productos
+   ========================================= */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 22px;
+  margin-top: 20px;
+}
+
+.product-card {
+  background-color: var(--blanco);
+  border: 1px solid var(--borde-suave);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--sombra-hover);
+  border-color: var(--naranja-rojo);
+}
+
+.product-card-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .product-card-img-wrapper {
+  background-color: #0f172a;
+}
+
+.product-card-img {
+  max-width: 100%;
+  max-height: 160px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-card-img {
+  transform: scale(1.05);
+}
+
+.wishlist-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+[data-theme="dark"] .wishlist-btn {
+  background: rgba(15, 23, 42, 0.85);
+}
+
+.wishlist-btn.active,
+.wishlist-btn:hover {
+  color: #ef4444;
+}
+
+/* =========================================
+   Formularios y Controles (Atoms & Molecules)
+   ========================================= */
+.form-container-box {
+  max-width: 540px;
+  margin: 30px auto;
+  background-color: var(--blanco);
+  padding: 35px 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--borde-suave);
+}
+
+.form-label-custom {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--azul-medio);
+  margin-bottom: 6px;
+  display: block;
+}
+
+[data-theme="dark"] .form-label-custom {
+  color: #93c5fd;
+}
+
+.form-input-custom,
+.form-select-custom {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid var(--borde-suave);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #f8fafc;
+  color: var(--texto-oscuro);
+  transition: all 0.25s ease;
+  outline: none;
+}
+
+[data-theme="dark"] .form-input-custom,
+[data-theme="dark"] .form-select-custom {
+  background-color: #0f172a;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+.form-input-custom:focus,
+.form-select-custom:focus {
+  border-color: var(--naranja-rojo);
+  background-color: var(--blanco);
+  box-shadow: 0 0 0 4px rgba(255, 71, 26, 0.12);
+}
+
+.form-error-msg {
+  color: var(--rojo-error);
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* =========================================
+   Footer
+   ========================================= */
+footer.ferreteria-footer {
+  background-color: var(--azul-oscuro);
+  color: #ffffff;
+  text-align: center;
+  padding: 24px;
+  margin-top: auto;
+  border-top: 3px solid var(--naranja-rojo);
+}
+
+footer.ferreteria-footer p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+/* =========================================
+   Animaciones & Responsividad
+   ========================================= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .hud-top-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .mobile-menu-btn {
+    display: inline-flex;
+  }
+
+  nav.hud-nav {
+    display: none;
+  }
+
+  nav.hud-nav.open {
+    display: block;
+  }
+
+  nav.hud-nav ul {
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 10px;
+  }
+
+  nav.hud-nav ul li a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-table-container {
+    overflow-x: auto;
+  }
+}
