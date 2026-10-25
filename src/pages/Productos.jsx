@@ -2,18 +2,22 @@ import React, { useState, useMemo } from 'react';
 import useProducts from '../hooks/useProducts';
 import SearchBar from '../components/molecules/SearchBar';
 import FilterGroup from '../components/molecules/FilterGroup';
+import MaterialCalculator from '../components/molecules/MaterialCalculator';
 import ProductGrid from '../components/organisms/ProductGrid';
 
 /**
  * Page: Productos (Catálogo Principal)
  * Listado reactivo de productos con buscador en tiempo real,
- * filtrado dinámico por categoría, rango de precio y lista de favoritos.
+ * calculadora de materiales de construcción (m²),
+ * filtrado dinámico por categoría, marca, stock disponible, precio y favoritos.
  */
 export const Productos = () => {
-  const { products, categories, isWishlisted } = useProducts();
+  const { products, categories, brands, isWishlisted } = useProducts();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
+  const [selectedBrand, setSelectedBrand] = useState('Todas');
+  const [onlyInStock, setOnlyInStock] = useState(false);
   const [showOnlyWishlist, setShowOnlyWishlist] = useState(false);
 
   // Calcular precio máximo del catálogo
@@ -36,22 +40,54 @@ export const Productos = () => {
       const matchesCategory =
         selectedCategory === 'Todas' || item.categoria === selectedCategory;
 
-      // 3. Filtro por precio máximo
+      // 3. Filtro por marca
+      const matchesBrand =
+        selectedBrand === 'Todas' || item.marca === selectedBrand;
+
+      // 4. Filtro por disponibilidad en stock
+      const matchesStock = !onlyInStock || Number(item.stock) > 0;
+
+      // 5. Filtro por precio máximo
       const matchesPrice = item.precio <= currentMaxPrice;
 
-      // 4. Filtro por favoritos
+      // 6. Filtro por favoritos
       const matchesWishlist = !showOnlyWishlist || isWishlisted(item.id);
 
-      return matchesSearch && matchesCategory && matchesPrice && matchesWishlist;
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesBrand &&
+        matchesStock &&
+        matchesPrice &&
+        matchesWishlist
+      );
     });
-  }, [products, searchTerm, selectedCategory, currentMaxPrice, showOnlyWishlist, isWishlisted]);
+  }, [
+    products,
+    searchTerm,
+    selectedCategory,
+    selectedBrand,
+    onlyInStock,
+    currentMaxPrice,
+    showOnlyWishlist,
+    isWishlisted,
+  ]);
 
   const handleResetFilters = () => {
     setSearchTerm('');
     setSelectedCategory('Todas');
+    setSelectedBrand('Todas');
+    setOnlyInStock(false);
     setCurrentMaxPrice(maxProductPrice);
     setShowOnlyWishlist(false);
   };
+
+  const hasActiveFilters =
+    searchTerm ||
+    selectedCategory !== 'Todas' ||
+    selectedBrand !== 'Todas' ||
+    onlyInStock ||
+    showOnlyWishlist;
 
   return (
     <div className="page-productos">
@@ -72,11 +108,19 @@ export const Productos = () => {
           />
         </div>
 
+        {/* Calculadora básica de materiales de construcción (m²) */}
+        <MaterialCalculator />
+
         {/* Grupo de Filtros Dinámicos */}
         <FilterGroup
           categories={categories}
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
+          brands={brands}
+          selectedBrand={selectedBrand}
+          onSelectBrand={setSelectedBrand}
+          onlyInStock={onlyInStock}
+          onToggleOnlyInStock={() => setOnlyInStock((prev) => !prev)}
           maxPrice={maxProductPrice}
           currentMaxPrice={currentMaxPrice}
           onMaxPriceChange={setCurrentMaxPrice}
@@ -90,8 +134,8 @@ export const Productos = () => {
           <span>
             Mostrando <strong>{filteredProducts.length}</strong> de <strong>{products.length}</strong> productos
           </span>
-          {(searchTerm || selectedCategory !== 'Todas' || showOnlyWishlist) && (
-            <span style={{ color: 'var(--naranja-rojo)', fontWeight: '500' }}>
+          {hasActiveFilters && (
+            <span style={{ color: 'var(--naranja-rojo)', fontWeight: '600' }}>
               Filtro activo
             </span>
           )}

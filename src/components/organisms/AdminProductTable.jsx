@@ -5,6 +5,7 @@ import Button from '../atoms/Button';
 import PriceTag from '../atoms/PriceTag';
 import Badge from '../atoms/Badge';
 import { PlusIcon, TrashIcon } from '../../assets/icons/Icons';
+import useToast from '../../hooks/useToast';
 
 /**
  * Organism: AdminProductTable
@@ -14,6 +15,7 @@ import { PlusIcon, TrashIcon } from '../../assets/icons/Icons';
  */
 export const AdminProductTable = () => {
   const { products, addProduct, deleteProduct } = useProducts();
+  const { showToast } = useToast();
 
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -110,11 +112,25 @@ export const AdminProductTable = () => {
     });
 
     setSuccessMessage(`Producto "${created.nombre}" creado exitosamente.`);
+    showToast({
+      title: '🛠️ Nuevo Producto',
+      message: `El producto "${created.nombre}" se agregó al inventario con éxito.`,
+      variant: 'success',
+    });
     handleCloseModal();
 
     setTimeout(() => {
       setSuccessMessage('');
     }, 4000);
+  };
+
+  const handleDeleteProduct = (prod) => {
+    deleteProduct(prod.id);
+    showToast({
+      title: '🗑️ Producto Eliminado',
+      message: `"${prod.nombre}" ha sido eliminado del catálogo.`,
+      variant: 'danger',
+    });
   };
 
   return (
@@ -220,7 +236,7 @@ export const AdminProductTable = () => {
                 <td style={{ textAlign: 'center' }}>
                   <button
                     type="button"
-                    onClick={() => deleteProduct(prod.id)}
+                    onClick={() => handleDeleteProduct(prod)}
                     aria-label={`Eliminar producto ${prod.nombre}`}
                     data-testid={`btn-delete-${prod.id}`}
                     style={{

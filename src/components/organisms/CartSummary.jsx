@@ -5,17 +5,23 @@ import useCart from '../../hooks/useCart';
 import useAuth from '../../hooks/useAuth';
 import PriceTag from '../atoms/PriceTag';
 import Button from '../atoms/Button';
+import DeliverySelector, { DELIVERY_OPTIONS } from '../molecules/DeliverySelector';
 import { CheckIcon } from '../../assets/icons/Icons';
 
 /**
  * Organism: CartSummary
- * Resumen del carrito, desglose de impuestos (IVA 19%),
- * formulario de facturación comercial con campos de contexto y modal de checkout
+ * Resumen del carrito, cotizador de despacho (Retiro, Estándar, Express),
+ * desglose de impuestos (IVA 19%), formulario de facturación comercial y checkout
  */
 export const CartSummary = () => {
   const { cart, totalAmount, neto, iva, clearCart } = useCart();
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  const [selectedDelivery, setSelectedDelivery] = useState('pickup');
+  const currentDelivery = DELIVERY_OPTIONS.find((o) => o.id === selectedDelivery) || DELIVERY_OPTIONS[0];
+  const deliveryCost = cart.length > 0 ? currentDelivery.precio : 0;
+  const finalTotal = totalAmount + deliveryCost;
 
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkoutFinished, setCheckoutFinished] = useState(false);
@@ -25,12 +31,16 @@ export const CartSummary = () => {
     tipoCliente: user?.tipoCliente || 'Particular',
     giro: user?.giro || 'Construcción',
     metodoPago: 'Transferencia Bancaria',
-    despacho: 'Retiro en Tienda (Gratis)',
+    despacho: 'Retiro en tienda (Gratis)',
   });
 
   const [formErrors, setFormErrors] = useState({});
 
   const handleOpenCheckout = () => {
+    setBillingData((prev) => ({
+      ...prev,
+      despacho: `${currentDelivery.nombre} (${currentDelivery.etiqueta})`,
+    }));
     setShowCheckoutModal(true);
     setCheckoutFinished(false);
   };
@@ -77,6 +87,12 @@ export const CartSummary = () => {
         Resumen de Compra
       </h3>
 
+      {/* Cotizador y Selector de Despacho */}
+      <DeliverySelector
+        selectedDelivery={selectedDelivery}
+        onSelectDelivery={setSelectedDelivery}
+      />
+
       {/* Desglose de Precios */}
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.95rem' }}>
         <span style={{ color: 'var(--texto-mutado)' }}>Monto Neto:</span>
@@ -94,7 +110,14 @@ export const CartSummary = () => {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '0.95rem' }}>
         <span style={{ color: 'var(--texto-mutado)' }}>Despacho:</span>
-        <span style={{ color: 'var(--verde-exito)', fontWeight: '600' }}>Gratis</span>
+        <span
+          style={{
+            color: deliveryCost === 0 ? 'var(--verde-exito)' : 'var(--naranja-rojo)',
+            fontWeight: '700',
+          }}
+        >
+          {deliveryCost === 0 ? 'Gratis ($0)' : `+$${deliveryCost.toLocaleString('es-CL')}`}
+        </span>
       </div>
 
       <hr style={{ borderColor: 'var(--borde-suave)', margin: '14px 0' }} />
@@ -102,7 +125,7 @@ export const CartSummary = () => {
       {/* Total a Pagar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <strong style={{ fontSize: '1.1rem', color: 'var(--azul-oscuro)' }}>Total a Pagar:</strong>
-        <PriceTag price={totalAmount} size="lg" />
+        <PriceTag price={finalTotal} size="lg" />
       </div>
 
       {/* Botón de Checkout */}
@@ -151,7 +174,7 @@ export const CartSummary = () => {
               ¡Orden Confirmada con Éxito!
             </h3>
             <p style={{ color: 'var(--texto-mutado)', maxWidth: '450px', margin: '0 auto 16px' }}>
-              Hemos emitido la boleta/factura electrónica para <strong>{billingData.nombre}</strong> (RUT: {billingData.rut}) por un total de <strong>${totalAmount.toLocaleString('es-CL')}</strong>.
+              Hemos emitido la boleta/factura electrónica para <strong>{billingData.nombre}</strong> (RUT: {billingData.rut}) por un total de <strong>${finalTotal.toLocaleString('es-CL')}</strong>.
             </p>
             <Alert variant="info" style={{ textAlign: 'left', fontSize: '0.88rem' }}>
               <strong>Datos de despacho:</strong> {billingData.despacho}<br />
@@ -272,8 +295,11 @@ export const CartSummary = () => {
                       onChange={handleInputChange}
                       className="form-select-custom"
                     >
-                      <option value="Retiro en Tienda (Gratis)">Retiro en Tienda (Gratis)</option>
-                      <option value="Despacho a Obra / Domicilio">Despacho a Obra / Domicilio</option>
+                      {DELIVERY_OPTIONS.map((opt) => (
+                        <option key={opt.id} value={`${opt.nombre} (${opt.etiqueta})`}>
+                          {opt.nombre} ({opt.etiqueta})
+                        </option>
+                      ))}
                     </Form.Select>
                   </Form.Group>
                 </Col>
@@ -291,8 +317,8 @@ export const CartSummary = () => {
                 }}
               >
                 <div>
-                  <small style={{ color: 'var(--azul-medio)', display: 'block' }}>Total de la compra (IVA incluido):</small>
-                  <PriceTag price={totalAmount} size="lg" />
+                  <small style={{ color: 'var(--azul-medio)', display: 'block' }}>Total de la compra (IVA y Despacho incluido):</small>
+                  <PriceTag price={finalTotal} size="lg" />
                 </div>
                 <small style={{ color: 'var(--texto-mutado)' }}>{cart.length} tipo(s) de productos</small>
               </div>

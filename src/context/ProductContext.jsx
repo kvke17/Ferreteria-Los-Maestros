@@ -10,6 +10,7 @@ const INITIAL_PRODUCTS = [
   {
     id: '1',
     nombre: 'Martillo Rojo',
+    marca: 'Stanley',
     descripcion: 'Martillo de acero forjado con mango ergonómico. Ideal para trabajos de carpintería y construcción general.',
     categoria: 'Herramientas Manuales',
     precio: 5000,
@@ -27,6 +28,7 @@ const INITIAL_PRODUCTS = [
   {
     id: '2',
     nombre: 'Taladro Percutor 500W',
+    marca: 'Bosch',
     descripcion: 'Taladro percutor de velocidad variable y reversa. Mandril de 13mm para perforaciones en concreto, madera y metal.',
     categoria: 'Herramientas Eléctricas',
     precio: 35000,
@@ -44,6 +46,7 @@ const INITIAL_PRODUCTS = [
   {
     id: '3',
     nombre: 'Serrucho Carpintero 20"',
+    marca: 'Bahco',
     descripcion: 'Serrucho tradicional de 20 pulgadas con dientes templados por inducción para cortes rápidos y precisos.',
     categoria: 'Herramientas Manuales',
     precio: 8500,
@@ -61,10 +64,11 @@ const INITIAL_PRODUCTS = [
   {
     id: '4',
     nombre: 'Destornillador Phillips',
+    marca: 'Truper',
     descripcion: 'Destornillador de punta en cruz magnética con mango bimaterial de alto torque y agarre cómodo.',
     categoria: 'Herramientas Manuales',
     precio: 3200,
-    stock: 25,
+    stock: 4, // Demuestra estado 'Últimas unidades' (< 5)
     unidadMedida: 'Unidad',
     imagen: '/images/destornillador.jpg',
     fichaTecnica: {
@@ -78,6 +82,7 @@ const INITIAL_PRODUCTS = [
   {
     id: '5',
     nombre: 'Tornillo Madera 1 1/2" (Caja x 100)',
+    marca: 'Mamut',
     descripcion: 'Tornillos autorroscantes cincados para fijación en madera, aglomerados y tabiquería.',
     categoria: 'Fijaciones',
     precio: 4990,
@@ -95,6 +100,7 @@ const INITIAL_PRODUCTS = [
   {
     id: '6',
     nombre: 'Cemento Especial Alta Resistencia',
+    marca: 'Polpaico',
     descripcion: 'Saco de cemento Portland para estructuras de hormigón armado, estucos y pegado de bloques.',
     categoria: 'Construcción',
     precio: 6800,
@@ -106,6 +112,24 @@ const INITIAL_PRODUCTS = [
       tipo: 'Especial Grado Estructural',
       norma: 'NCh 148',
       garantia: '3 meses',
+    },
+    destacado: false,
+  },
+  {
+    id: '7',
+    nombre: 'Broca Concreto SDS Plus 8mm',
+    marca: 'Bosch',
+    descripcion: 'Broca de carburo de tungsteno para hormigón y mampostería pesada. Encaje SDS Plus.',
+    categoria: 'Herramientas Eléctricas',
+    precio: 4500,
+    stock: 0, // Demuestra estado 'Agotado' con botón deshabilitado
+    unidadMedida: 'Unidad',
+    imagen: '/images/LOGO-removebg-preview.png',
+    fichaTecnica: {
+      medida: '8 x 160mm',
+      punta: 'Carburo reforzado 4 filos',
+      origen: 'Alemania',
+      garantia: '6 meses',
     },
     destacado: false,
   },
@@ -159,6 +183,7 @@ export const ProductProvider = ({ children }) => {
     const newProduct = {
       id: 'prod-' + Date.now(),
       nombre: productData.nombre.trim(),
+      marca: productData.marca?.trim() || 'Los Maestros',
       descripcion: productData.descripcion?.trim() || 'Sin descripción adicional.',
       categoria: productData.categoria || 'Herramientas Manuales',
       precio: Math.max(0, Number(productData.precio) || 0),
@@ -204,8 +229,9 @@ export const ProductProvider = ({ children }) => {
 
   const isWishlisted = (productId) => wishlist.includes(productId);
 
-  // Lista de categorías únicas disponibles
+  // Lista de categorías y marcas únicas disponibles
   const categories = Array.from(new Set(products.map((p) => p.categoria)));
+  const brands = Array.from(new Set(products.map((p) => p.marca).filter(Boolean)));
 
   return (
     <ProductContext.Provider
@@ -218,6 +244,7 @@ export const ProductProvider = ({ children }) => {
         toggleWishlist,
         isWishlisted,
         categories,
+        brands,
       }}
     >
       {children}

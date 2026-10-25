@@ -5,18 +5,21 @@ import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider } from '../context/AuthContext';
 import { ProductProvider } from '../context/ProductContext';
 import { CartProvider } from '../context/CartContext';
+import { ToastProvider } from '../context/ToastContext';
 
 export const AllProviders = ({ children, initialEntries = ['/'] }) => {
   return (
     <MemoryRouter initialEntries={initialEntries}>
       <ThemeProvider>
-        <AuthProvider>
-          <ProductProvider>
-            <CartProvider>
-              {children}
-            </CartProvider>
-          </ProductProvider>
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <ProductProvider>
+              <CartProvider>
+                {children}
+              </CartProvider>
+            </ProductProvider>
+          </AuthProvider>
+        </ToastProvider>
       </ThemeProvider>
     </MemoryRouter>
   );

@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Badge from '../atoms/Badge';
+import StockBadge from '../atoms/StockBadge';
 import PriceTag from '../atoms/PriceTag';
 import { HeartIcon, CartIcon } from '../../assets/icons/Icons';
 import useCart from '../../hooks/useCart';
 import useProducts from '../../hooks/useProducts';
+import useToast from '../../hooks/useToast';
 
 /**
  * Organism: ProductCard
@@ -13,11 +15,20 @@ import useProducts from '../../hooks/useProducts';
 export const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   const { isWishlisted, toggleWishlist } = useProducts();
+  const { showToast } = useToast();
+
+  const isOutOfStock = Number(product.stock) <= 0;
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isOutOfStock) return;
     addToCart(product, 1);
+    showToast({
+      title: '🛒 Carrito',
+      message: `¡"${product.nombre}" añadido al carrito!`,
+      variant: 'success',
+    });
   };
 
   const handleWishlistClick = (e) => {
@@ -58,8 +69,9 @@ export const ProductCard = ({ product }) => {
 
       {/* Contenido */}
       <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
           <Badge variant="category">{product.categoria}</Badge>
+          <StockBadge stock={product.stock} />
         </div>
 
         <Link to={`/producto/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -75,6 +87,14 @@ export const ProductCard = ({ product }) => {
             {product.nombre}
           </h3>
         </Link>
+
+        {product.marca && (
+          <div style={{ marginBottom: '6px' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--texto-mutado)' }}>
+              Marca: <strong style={{ color: 'var(--azul-medio)' }}>{product.marca}</strong>
+            </span>
+          </div>
+        )}
 
         <p
           style={{
@@ -109,16 +129,36 @@ export const ProductCard = ({ product }) => {
         >
           Ver detalles
         </Link>
-        <button
-          type="button"
-          onClick={handleAddToCart}
-          className="btn-ferreteria-primary"
-          aria-label={`Añadir ${product.nombre} al carrito`}
-          title="Añadir al carrito"
-          style={{ padding: '8px 12px' }}
-        >
-          <CartIcon size={16} />
-        </button>
+        {isOutOfStock ? (
+          <button
+            type="button"
+            disabled
+            className="btn-ferreteria-secondary"
+            style={{
+              padding: '8px 12px',
+              opacity: 0.6,
+              cursor: 'not-allowed',
+              backgroundColor: '#94a3b8',
+              fontSize: '0.82rem',
+              fontWeight: 'bold',
+            }}
+            title="Producto agotado"
+            data-testid={`btn-add-disabled-${product.id}`}
+          >
+            Agotado
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            className="btn-ferreteria-primary"
+            aria-label={`Añadir ${product.nombre} al carrito`}
+            title="Añadir al carrito"
+            style={{ padding: '8px 12px' }}
+          >
+            <CartIcon size={16} />
+          </button>
+        )}
       </div>
     </article>
   );

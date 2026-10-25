@@ -2,8 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import useProducts from '../hooks/useProducts';
 import useCart from '../hooks/useCart';
+import useToast from '../hooks/useToast';
 import PriceTag from '../components/atoms/PriceTag';
 import Badge from '../components/atoms/Badge';
+import StockBadge from '../components/atoms/StockBadge';
 import Button from '../components/atoms/Button';
 import { CartIcon, HeartIcon, CheckIcon } from '../assets/icons/Icons';
 
@@ -16,16 +18,20 @@ export const ProductoDetalle = () => {
   const { id } = useParams();
   const { getProductById, isWishlisted, toggleWishlist } = useProducts();
   const { addToCart } = useCart();
+  const { showToast } = useToast();
 
   const product = getProductById(id);
+
+  const isOutOfStock = product ? Number(product.stock) <= 0 : false;
+  const isLowStock = product ? Number(product.stock) > 0 && Number(product.stock) < 5 : false;
 
   const [quantity, setQuantity] = useState(1);
   const [purchaseMessage, setPurchaseMessage] = useState('');
 
   const subtotal = useMemo(() => {
-    if (!product) return 0;
+    if (!product || isOutOfStock) return 0;
     return product.precio * quantity;
-  }, [product, quantity]);
+  }, [product, quantity, isOutOfStock]);
 
   if (!product) {
     return (
@@ -42,6 +48,7 @@ export const ProductoDetalle = () => {
   }
 
   const handleQuantityChange = (e) => {
+    if (isOutOfStock) return;
     const val = parseInt(e.target.value, 10);
     if (!isNaN(val) && val >= 1) {
       const maxVal = product.stock || 99;
@@ -50,8 +57,15 @@ export const ProductoDetalle = () => {
   };
 
   const handleAddToCart = () => {
+    if (isOutOfStock) return;
     addToCart(product, quantity);
-    setPurchaseMessage(`¡Agregado con éxito! Se añadieron ${quantity} ${product.unidadMedida || 'unidad(es)'} de "${product.nombre}" a tu carrito.`);
+    const msg = `¡Agregado con éxito! Se añadieron ${quantity} ${product.unidadMedida || 'unidad(es)'} de "${product.nombre}" a tu carrito.`;
+    setPurchaseMessage(msg);
+    showToast({
+      title: '🛒 Carrito',
+      message: msg,
+      variant: 'success',
+    });
     setTimeout(() => {
       setPurchaseMessage('');
     }, 4500);
@@ -113,12 +127,57 @@ export const ProductoDetalle = () => {
 
           {/* Columna Derecha: Información y Cálculo Interactivo */}
           <div style={{ flex: '1 1 360px', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
               <Badge variant="category">{product.categoria}</Badge>
-              <Badge variant={product.stock > 5 ? 'stock' : 'lowstock'}>
-                Stock: {product.stock} disponibles
-              </Badge>
+              <StockBadge stock={product.stock} />
+              {product.marca && (
+                <Badge variant="category" style={{ backgroundColor: '#f1f5f9', color: 'var(--azul-medio)', border: '1px solid var(--borde-suave)' }}>
+                  Marca: {product.marca}
+                </Badge>
+              )}
             </div>
+
+            {/* Aviso de Poco Stock (< 5 unidades) */}
+            {isLowStock && (
+              <div
+                style={{
+                  backgroundColor: '#fef3c7',
+                  color: '#b45309',
+                  padding: '10px 14px',
+                  borderRadius: '8px',
+                  marginBottom: '14px',
+                  fontSize: '0.88rem',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  border: '1px solid #fde68a',
+                }}
+              >
+                <span>⚠️ ¡Últimas unidades disponibles! Quedan solo {product.stock} {product.unidadMedida || 'unidades'} en bodega.</span>
+              </div>
+            )}
+
+            {/* Aviso de Agotado */}
+            {isOutOfStock && (
+              <div
+                style={{
+                  backgroundColor: '#fee2e2',
+                  color: '#b91c1c',
+                  padding: '10px 14px',
+                  borderRadius: '8px',
+                  marginBottom: '14px',
+                  fontSize: '0.88rem',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  border: '1px solid #fca5a5',
+                }}
+              >
+                <span>⛔ Este producto se encuentra actualmente agotado sin stock disponible.</span>
+              </div>
+            )}
 
             <h3 style={{ color: 'var(--azul-oscuro)', fontSize: '1.25rem', marginBottom: '10px' }}>
               Descripción Detallada
@@ -162,9 +221,10 @@ export const ProductoDetalle = () => {
                 <input
                   type="number"
                   id="cantidad-input"
-                  min="1"
+                  min={isOutOfStock ? 0 : 1}
                   max={product.stock || 20}
-                  value={quantity}
+                  disabled={isOutOfStock}
+                  value={isOutOfStock ? 0 : quantity}
                   onChange={handleQuantityChange}
                   style={{
                     width: '70px',
@@ -173,6 +233,8 @@ export const ProductoDetalle = () => {
                     border: '1px solid var(--borde-suave)',
                     fontWeight: 'bold',
                     textAlign: 'center',
+                    backgroundColor: isOutOfStock ? '#f1f5f9' : 'inherit',
+                    cursor: isOutOfStock ? 'not-allowed' : 'default',
                   }}
                 />
               </div>
@@ -186,12 +248,24 @@ export const ProductoDetalle = () => {
 
               <Button
                 type="button"
-                variant="primary"
+                variant={isOutOfStock ? 'outline' : 'primary'}
                 onClick={handleAddToCart}
-                style={{ width: '100%', padding: '12px' }}
+                disabled={isOutOfStock}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  opacity: isOutOfStock ? 0.6 : 1,
+                  cursor: isOutOfStock ? 'not-allowed' : 'pointer',
+                }}
                 data-testid="btn-add-to-cart"
               >
-                <CartIcon size={18} /> Calcular y Añadir al Carrito
+                {isOutOfStock ? (
+                  'Producto Agotado'
+                ) : (
+                  <>
+                    <CartIcon size={18} /> Calcular y Añadir al Carrito
+                  </>
+                )}
               </Button>
             </div>
 
